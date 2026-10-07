@@ -1,0 +1,18 @@
+{
+  "name": "herdr-scrcpy",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "scripts": {
+    "mirror": "bun src/mirror.ts",
+    "probe": "bun src/probe.ts",
+    "bench": "bun src/bench.ts",
+    "build:native": "sh scripts/build-native.sh",
+    "typecheck": "tsc",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "1.4.2",
+    "typescript": "^7.0.2"
+  }
+}

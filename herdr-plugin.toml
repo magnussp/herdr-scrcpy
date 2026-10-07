@@ -1,0 +1,24 @@
+id = "magnussp.scrcpy"
+name = "scrcpy"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Mirror and control an Android device inside a herdr pane (scrcpy + Kitty graphics)"
+platforms = ["macos", "linux"]
+
+# Compiles the native H.264 decoder (needs a C compiler, pkg-config and the
+# FFmpeg libraries). `herdr plugin link` skips build steps: run
+# `sh scripts/build-native.sh` yourself in a linked checkout.
+[[build]]
+command = ["sh", "scripts/build-native.sh"]
+
+[[actions]]
+id = "mirror"
+title = "Mirror Android device"
+contexts = ["workspace", "tab", "pane"]
+command = ["sh", "scripts/open-mirror.sh"]
+
+[[panes]]
+id = "mirror"
+title = "Android"
+placement = "split"
+command = ["bun", "src/mirror.ts"]

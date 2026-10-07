@@ -1,0 +1,6 @@
+node_modules/
+.dev/
+bin/
+# Local working notes
+docs/upstream/
+.DS_Store
