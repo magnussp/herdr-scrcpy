@@ -116,6 +116,7 @@ let decoderSeq = 0;
 // held back while stdout is backed up, so a slow terminal drops frames instead
 // of queueing them.
 let latest: Frame | null = null;
+let latestData: Buffer | null = null; // "direct" transfer: bytes of the drawn frame
 let dirty = false;
 let backedUp = false;
 let vw = 0, vh = 0;
@@ -147,8 +148,12 @@ function render() {
     img = kittyFileFrame(latest.path, latest.width, latest.height, opts);
     sent(latest.path);
   } else {
-    img = kittyFrame(readFileSync(latest.path), latest.width, latest.height, opts);
-    rmSync(latest.path, { force: true });
+    // Keep the bytes: a resize redraws this same frame after its file is gone.
+    if (!latestData) {
+      latestData = readFileSync(latest.path);
+      rmSync(latest.path, { force: true });
+    }
+    img = kittyFrame(latestData, latest.width, latest.height, opts);
   }
   const s = term.moveTo(layout.row0, layout.col0) + img + (doubleBuffer ? term.deleteImage(IMAGE_IDS[front]) : "");
   front = back;
@@ -293,6 +298,7 @@ async function startSession() {
       // A frame that was never drawn is superseded: drop its file now.
       if (latest && dirty) rmSync(latest.path, { force: true });
       latest = frame;
+      latestData = null;
       latestAt = t;
       dirty = true;
       scheduleRender();
